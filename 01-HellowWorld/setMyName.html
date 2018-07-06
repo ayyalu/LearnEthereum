@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>Ethereum Hello World</title>
+<script>
+
+function setProvider()
+{
+	window.web3 = new Web3(web3.currentProvider);
+}
+
+function setMyName()
+{
+	ABIJSON = JSON.parse('[{"constant":true,"inputs":[],"name":"getMyName","outputs":[{"name":"_MyName","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_MyName","type":"string"}],"name":"setMyName","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]');
+	MyContract = web3.eth.contract(ABIJSON).at("0xac9973faea4770bbebfcc875cb45d4fff67ff99b");
+
+	var MyName = document.getElementById("txtMyName").value; 
+	
+	MyContract.setMyName.sendTransaction(MyName,function(error, transactionHash) {
+		if(!error)
+		{
+			console.log("Transaction successfully sent");
+			console.log(transactionHash);
+			console.log("https://rinkeby.etherscan.io/tx/"+transactionHash);
+		}
+		else
+		{
+			console.log(error)
+		}
+	});
+
+}
+
+</script>
+</head>
+<body onload="setProvider()">
+
+<table width="50%" border=1 align="center" cellpadding=5 cellspacing=0>
+	<tr>
+		<td colspan=2  align="center">Ethereum Hello World - Set Name</td>
+	</tr>
+	<tr>
+		<td width="50%">My Name</td>
+		<td width="50%"><input name="txtMyName" id="txtMyName" type="text" value=""></td>
+	</tr>
+	<tr>
+		<td colspan=2  align="center">
+			<button type="button" onClick="setMyName()">Set My Name</button>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

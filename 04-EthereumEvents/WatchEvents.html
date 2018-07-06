@@ -1,0 +1,35 @@
+<html>
+<head>
+<title>Ethereum - Watch Events</title>
+<script>
+
+function setProvider()
+{
+	window.web3 = new Web3(web3.currentProvider);
+	WatchEvents();
+}
+
+function WatchEvents()
+{
+	ABIJSON = JSON.parse('[{"constant":false,"inputs":[{"name":"ToAddress","type":"address"}],"name":"TransferEther","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"AddressFrom","type":"address"},{"indexed":true,"name":"AddressTo","type":"address"},{"indexed":true,"name":"Amount","type":"uint256"},{"indexed":false,"name":"TransTimeStamp","type":"uint256"}],"name":"event_Transfer","type":"event"}]');
+	MyContract = web3.eth.contract(ABIJSON).at("0x012993eb2d4e6ac26f73ebe605ae5764df2daa52");
+
+	var event = MyContract.event_Transfer({Amount: 101},{fromBlock: 0, toBlock: 'latest'});
+	event.watch(function(error, result){
+		if (!error)
+			console.log(result);
+	});
+}
+
+</script>
+</head>
+<body onload="setProvider()">
+
+<table width="50%" border=1 align="center" cellpadding=5 cellspacing=0>
+	<tr>
+		<td colspan=2  align="center"><b>Ethereum - Watch Events</b></td>
+	</tr>
+</table>
+
+</body>
+</html>

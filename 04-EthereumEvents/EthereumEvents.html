@@ -1,0 +1,59 @@
+<html>
+<head>
+<title>Ethereum - Ethereum Events</title>
+<script>
+
+function setProvider()
+{
+	window.web3 = new Web3(web3.currentProvider);
+}
+
+function TransferEther()
+{
+	ABIJSON = JSON.parse('[{"constant":false,"inputs":[{"name":"ToAddress","type":"address"}],"name":"TransferEther","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"AddressFrom","type":"address"},{"indexed":true,"name":"AddressTo","type":"address"},{"indexed":true,"name":"Amount","type":"uint256"},{"indexed":false,"name":"TransTimeStamp","type":"uint256"}],"name":"event_Transfer","type":"event"}]');
+	MyContract = web3.eth.contract(ABIJSON).at("0x012993eb2d4e6ac26f73ebe605ae5764df2daa52");
+
+	var ToAddress = document.getElementById("txtToAddress").value;
+	var Amount = document.getElementById("txtAmount").value; 
+
+	MyContract.TransferEther.sendTransaction(ToAddress,{value:Amount},function(error, transactionHash) {
+		if(!error)
+		{
+			console.log("Transaction successfully sent");
+			console.log(transactionHash);
+			console.log("https://rinkeby.etherscan.io/tx/"+transactionHash);
+		}
+		else
+		{
+			console.log(error)
+		}
+	});
+
+	
+}
+
+</script>
+</head>
+<body onload="setProvider()">
+
+<table width="50%" border=1 align="center" cellpadding=5 cellspacing=0>
+	<tr>
+		<td colspan=2  align="center"><b>Ethereum - Ethereum Events</b></td>
+	</tr>
+	<tr>
+		<td width="50%">To Address</td>
+		<td width="50%"><input name="txtToAddress" id="txtToAddress" type="text" value="0x2b755A94118017f88fBF3df5FC2C11d4B1FC97A9"></td>
+	</tr>
+	<tr>
+		<td width="50%">Amount <font color=red>(in Wei)</font></td>
+		<td width="50%"><input name="txtAmount" id="txtAmount" type="text" value=""></td>
+	</tr>
+	<tr>
+		<td colspan=2  align="center">
+			<button type="button" onClick="TransferEther()">Transfer Ether</button>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

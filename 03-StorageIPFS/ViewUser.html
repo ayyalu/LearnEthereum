@@ -1,0 +1,62 @@
+<html>
+<head>
+<title>Ethereum Storage IPFS</title>
+<script src="js/buffer/buffer.js"></script>
+<script src="js/ipfsapi/index.js" integrity="sha384-5bXRcW9kyxxnSMbOoHzraqa7Z0PQWIao+cgeg327zit1hz5LZCEbIMx/LWKPReuB" crossorigin="anonymous"></script>
+
+<script>
+
+var CertificateHash="";
+
+function setProvider()
+{
+	window.web3 = new Web3(web3.currentProvider);
+}
+
+function ViewUser()
+{
+	ABIJSON = JSON.parse('[{"constant":true,"inputs":[{"name":"EmailID","type":"string"}],"name":"ViewUser","outputs":[{"name":"FirstName","type":"string"},{"name":"LastName","type":"string"},{"name":"MobileNo","type":"int256"},{"name":"CertHash","type":"bytes"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"EmailID","type":"string"},{"name":"FirstName","type":"string"},{"name":"LastName","type":"string"},{"name":"MobileNo","type":"int256"},{"name":"CertHash","type":"bytes"}],"name":"AddUser","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]');
+	MyContract = web3.eth.contract(ABIJSON).at("0x04df1ad1da36b2c41db5b643918992856082b419");
+
+	var EmailID = document.getElementById("txtEmailID").value; 
+	
+	MyContract.ViewUser.call(EmailID,function(error, result) {
+		if(!error)
+		{
+			console.log(result);
+			console.log("First Name : "+result[0]);
+			console.log("Last Name : "+result[1]);
+			console.log("Mobile No : "+result[2]["c"][0]);
+			console.log("Certificate Hash : "+result[3]);
+			console.log(web3.toAscii(result[3]));
+			console.log("https://ipfs.io/ipfs/"+web3.toAscii(result[3]));
+		}
+		else
+		{
+			console.log(error)
+		}
+	});
+
+}
+
+</script>
+</head>
+<body onload="setProvider()">
+
+<table width="50%" border=1 align="center" cellpadding=5 cellspacing=0>
+	<tr>
+		<td colspan=2  align="center">Ethereum Storage IPFS</td>
+	</tr>
+	<tr>
+		<td width="50%">Email ID</td>
+		<td width="50%"><input name="txtEmailID" id="txtEmailID" type="text" value=""></td>
+	</tr>
+	<tr>
+		<td colspan=2  align="center">
+			<button type="button" onClick="ViewUser()">View User</button>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

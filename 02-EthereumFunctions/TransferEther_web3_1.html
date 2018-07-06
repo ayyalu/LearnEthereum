@@ -1,0 +1,82 @@
+<html>
+<head>
+<title>Ethereum - Ethereum Functions</title>
+<script src="dist/web3.js"></script>
+<script>
+
+function setProvider()
+{
+	if (window.web3) {
+	  window.web3 = new Web3(window.web3.currentProvider);
+	}
+}
+
+function TransferEther()
+{
+	ABIJSON = JSON.parse('[{"constant":true,"inputs":[{"name":"A","type":"uint256"},{"name":"B","type":"uint256"}],"name":"CalC","outputs":[{"name":"AB","type":"uint256"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":false,"inputs":[{"name":"EmailID","type":"string"},{"name":"FirstName","type":"string"},{"name":"LastName","type":"string"},{"name":"MobileNo","type":"int256"}],"name":"AddUser","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"EmailID","type":"string"}],"name":"ViewUser","outputs":[{"name":"FirstName","type":"string"},{"name":"LastName","type":"string"},{"name":"MobileNo","type":"int256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"ToAddress","type":"address"}],"name":"TransferEther_NormalWay","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"ToAddress","type":"address"}],"name":"TransferEther","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"ToAddress","type":"address"}],"name":"TransferEther_WithModifier","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]');
+	//MyContract = new web3.eth.contract(ABIJSON).at("0xd142a32e56a17f493702bc29b2238058e20b5ca4");
+	var MyContract = new web3.eth.Contract(ABIJSON,'0x425df22c50578f3e8d2a1756e1324cf0d78cfca4');
+
+	var ToAddress = document.getElementById("txtToAddress").value;
+	var Amount = document.getElementById("txtAmount").value; 
+
+	MyContract.methods.TransferEther_NormalWay(ToAddress).send({from:'0xfA00c38A5B9dAa66D0A7Cc9ba77981eAA47b9c4B',value:Amount})
+		.once('transactionHash', function(hash){
+			console.log("transactionHash event fired")
+			console.log(hash);
+			console.log("https://rinkeby.etherscan.io/tx/"+hash);
+			console.log("------------------------------------");
+		})
+		.once('receipt', function(receipt){
+			console.log("receipt event fired")
+			console.log(receipt);
+			console.log("------------------------------------");
+		})
+		.on('confirmation', function(confNumber, receipt){
+		/*
+			console.log("confirmation event fired")
+			console.log(confNumber);
+			console.log(receipt);
+			console.log("------------------------------------");
+		*/
+		})
+		.on('error', function(error){
+			console.log("Transaction Failed from error");
+			console.log("------------------------------------");
+		})
+		.then(function(receipt){
+			console.log("final event fired");
+			console.log(receipt);
+			console.log("------------------------------------");
+		})
+		.catch(function(error){
+			console.log("Transaction Failed from Catch");
+		});
+		
+}
+
+</script>
+</head>
+<body onload="setProvider()">
+
+<table width="50%" border=1 align="center" cellpadding=5 cellspacing=0>
+	<tr>
+		<td colspan=2  align="center"><b>Ethereum - Ethereum Functions</b></td>
+	</tr>
+	<tr>
+		<td width="50%">To Address</td>
+		<td width="50%"><input name="txtToAddress" id="txtToAddress" type="text" value="0x2b755A94118017f88fBF3df5FC2C11d4B1FC97A9"></td>
+	</tr>
+	<tr>
+		<td width="50%">Amount <font color=red>(in Wei)</font></td>
+		<td width="50%"><input name="txtAmount" id="txtAmount" type="text" value="101"></td>
+	</tr>
+	<tr>
+		<td colspan=2  align="center">
+			<button type="button" onClick="TransferEther()">Transfer Ether</button>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

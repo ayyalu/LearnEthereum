@@ -1,0 +1,100 @@
+<html>
+<head>
+<title>Ethereum Storage IPFS</title>
+<script src="js/buffer/buffer.js"></script>
+<script src="js/ipfsapi/index.js" integrity="sha384-5bXRcW9kyxxnSMbOoHzraqa7Z0PQWIao+cgeg327zit1hz5LZCEbIMx/LWKPReuB" crossorigin="anonymous"></script>
+
+<script>
+
+var CertificateHash="";
+
+function setProvider()
+{
+	window.web3 = new Web3(web3.currentProvider);
+}
+
+function getCertificateHash()
+{
+	const reader = new FileReader();
+	const CertFile = document.getElementById("CertFile");
+	reader.readAsArrayBuffer(CertFile.files[0]); // Read Provided File
+	  
+    reader.onloadend = function() {
+			const ipfs = window.IpfsApi('ipfs.infura.io', 5001, {protocol: 'https'}) // Connect to IPFS
+			const buf = buffer.Buffer(reader.result) // Convert data into buffer
+			
+			ipfs.files.add(buf)
+				.then(function (result) {
+					CertificateHash=result[0].hash;
+					console.log(CertificateHash);
+					AddUser();
+				})
+				.catch(function(err) {
+					console.log('Fail: ', err)
+			})
+  
+    }
+}
+
+function AddUser()
+{
+	ABIJSON = JSON.parse('[{"constant":true,"inputs":[{"name":"EmailID","type":"string"}],"name":"ViewUser","outputs":[{"name":"FirstName","type":"string"},{"name":"LastName","type":"string"},{"name":"MobileNo","type":"int256"},{"name":"CertHash","type":"bytes"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"EmailID","type":"string"},{"name":"FirstName","type":"string"},{"name":"LastName","type":"string"},{"name":"MobileNo","type":"int256"},{"name":"CertHash","type":"bytes"}],"name":"AddUser","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]');
+	MyContract = web3.eth.contract(ABIJSON).at("0x04df1ad1da36b2c41db5b643918992856082b419");
+
+	var EmailID = document.getElementById("txtEmailID").value; 
+	var FirstName = document.getElementById("txtFirstName").value; 
+	var LastName = document.getElementById("txtLastName").value; 
+	var MobileNo = document.getElementById("txtMobileNo").value; 
+	
+	MyContract.AddUser.sendTransaction(EmailID,FirstName,LastName,MobileNo,CertificateHash,function(error, transactionHash) {
+		if(!error)
+		{
+			console.log("Transaction successfully sent");
+			console.log(transactionHash);
+			console.log("https://rinkeby.etherscan.io/tx/"+transactionHash);
+		}
+		else
+		{
+			console.log(error)
+		}
+	});
+
+}
+
+</script>
+</head>
+<body onload="setProvider()">
+
+<table width="50%" border=1 align="center" cellpadding=5 cellspacing=0>
+	<tr>
+		<td colspan=2  align="center">Ethereum Storage IPFS</td>
+	</tr>
+	<tr>
+		<td width="50%">Email ID</td>
+		<td width="50%"><input name="txtEmailID" id="txtEmailID" type="text" value=""></td>
+	</tr>
+	<tr>
+		<td width="50%">First Name</td>
+		<td width="50%"><input name="txtFirstName" id="txtFirstName" type="text" value=""></td>
+	</tr>
+	<tr>
+		<td width="50%">Last Name</td>
+		<td width="50%"><input name="txtLastName" id="txtLastName" type="text" value=""></td>
+	</tr>
+	<tr>
+		<td width="50%">Mobile No.</td>
+		<td width="50%"><input name="txtMobileNo" id="txtMobileNo" type="text" value=""></td>
+	</tr>
+	<tr>
+		<td width="50%">Attach Certificate</td>
+		<td width="50%"><input type="file" name="CertFile" id="CertFile"></td>
+	</tr>
+	<tr>
+		<td colspan=2  align="center">
+			<button type="button" onClick="getCertificateHash()">Add User</button>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>
