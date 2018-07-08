@@ -1,3 +1,5 @@
+var express = require('express');
+var app = express();
 app.use('/web', express.static(__dirname + '/web'));
 var server = app.listen(8080, function () {
    var host = server.address().address

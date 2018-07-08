@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>Ethereum Hello World</title>
+<script>
+
+function setProvider()
+{
+	window.web3 = new Web3(web3.currentProvider);
+}
+
+function getMyName()
+{
+	ABIJSON = JSON.parse('[{"constant":true,"inputs":[],"name":"getMyName","outputs":[{"name":"_MyName","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_MyName","type":"string"}],"name":"setMyName","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]');
+	MyContract = web3.eth.contract(ABIJSON).at("0xac9973faea4770bbebfcc875cb45d4fff67ff99b");
+
+	MyContract.getMyName.call(function(error, result) {
+		if(!error)
+		{
+			console.log(result);
+			document.getElementById("div_myname").innerHTML=result;
+		}
+		else
+		{
+			console.log(err)
+		}
+	});
+
+}
+
+</script>
+</head>
+<body onload="setProvider()">
+
+<table width="50%" border=1 align="center" cellpadding=5 cellspacing=0>
+	<tr>
+		<td colspan=2  align="center">Ethereum Hello World - Get Name</td>
+	</tr>
+	<tr>
+		<td width="50%">My Name</td>
+		<td width="50%"><div id="div_myname"></div></td>
+	</tr>
+	<tr>
+		<td colspan=2  align="center">
+			<button type="button" onClick="getMyName()">Get My Name</button>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>
